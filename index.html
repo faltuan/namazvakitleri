@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namaz Vakitleri</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#121212">
+</head>
+
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&display=swap');
+
+
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #c5db44;
+            --card-bg-color: #2a2a2a;
+            --border-color: #444;
+            --button-bg-color: #3a3a3a;
+            --button-text-color: #e0e0e0;
+            --button-hover-bg-color: #4a4a4a;
+            --active-button-bg-color: var(--primary-color);
+            --active-button-text-color: #1a1a1a;
+        }
+
+        * {
+            font-family: 'Lexend Deca', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Lexend Deca', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding: 20px 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+
+        .header-buttons.desktop-only,
+        .theme-switcher.desktop-only {
+            display: block;
+        }
+
+        #next-prayer-name {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        #update-location-btn-desktop {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #theme-toggle-btn-desktop {
+            background: none;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 10%;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+
+        #mobile-menu-btn {
+            display: none;
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px;
+            font-size: 1.8em;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-btn:hover {
+            background-color: #c5db44;
+            transform: scale(1.05);
+        }
+
+        #mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+
+        .mobile-menu-container {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100%;
+            background-color: var(--card-bg-color);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transition: left 0.3s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-container.open {
+            left: 0;
+        }
+
+        .close-mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2em;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-content h2 {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-content button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .mobile-menu-content button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        #update-location-btn-mobile {}
+
+        #theme-toggle-btn-mobile {}
+
+
+        .location-display {
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .location-display h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .location-display p {
+            margin: 5px 0;
+        }
+
+        #countdown {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .theme-switcher button {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .today-times {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .prayer-time {
+            background-color: var(--card-bg-color);
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .prayer-time.current {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border-color: var(--primary-color);
+        }
+
+        .prayer-time p {
+            margin: 5px 0;
+        }
+
+        .prayer-time .time {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-buttons button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .filter-buttons button.active {
+            background-color: var(--active-button-bg-color);
+            color: var(--active-button-text-color);
+            border-color: var(--primary-color);
+        }
+
+        .filter-buttons button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        .filter-buttons button.active:hover {
+            background-color: #c5db44;
+        }
+
+        #date-selector {
+            padding: 8px;
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .prayer-table-section {
+            background-color: var(--card-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th,
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        thead {
+            background-color: var(--button-bg-color);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: var(--button-bg-color);
+        }
+
+
+        #prayer-table tbody td:first-child {
+            text-align: left;
+        }
+
+        #prayer-table {
+            text-align: left;
+        }
+
+
+        tr.current-day {
+            background-color: rgba(197, 219, 68, 0.2);
+
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        tr.current-day:hover {
+            background-color: rgba(197, 219, 68, 0.3);
+
+        }
+
+        tr.current-day td {
+            border-color: var(--primary-color);
+        }
+
+
+        tr.current-day td:first-child {
+            text-align: left;
+            font-weight: 700;
+        }
+
+
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg-color);
+            margin: auto;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #location-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        #submit-location-btn {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+
+        body.light-mode {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --primary-color: #28a745;
+            --card-bg-color: #ffffff;
+            --border-color: #ddd;
+            --button-bg-color: #e9e9e9;
+            --button-text-color: #333;
+            --button-hover-bg-color: #dcdcdc;
+            --active-button-bg-color: var(--primary-color);
+            --active-button-text-color: #ffffff;
+        }
+
+
+        body.light-mode #update-location-btn,
+        body.light-mode #submit-location-btn,
+        body.light-mode .prayer-time.current {
+            color: #ffffff;
+        }
+
+        body.light-mode .filter-buttons button.active {
+            color: var(--active-button-text-color);
+        }
+
+        body.light-mode #location-input {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+
+        body.light-mode .mobile-menu-container {
+            background-color: var(--card-bg-color);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .close-mobile-menu-btn {
+            color: var(--text-color);
+        }
+
+        body.light-mode .mobile-menu-content h2 {
+            color: var(--primary-color);
+        }
+
+        body.light-mode .mobile-menu-content button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        body.light-mode .mobile-menu-content button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+
+        body.light-mode #mobile-menu-btn {
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+
+        @media (max-width: 768px) {
+
+            #mobile-menu-btn {
+                display: flex;
+                position: fixed;
+                left: 20px;
+                bottom: 20px;
+                z-index: 99;
+            }
+
+
+            header {
+                justify-content: center;
+            }
+
+            .desktop-only {
+                display: none !important;
+            }
+
+            .header-buttons,
+            .theme-switcher,
+            #update-location-btn-desktop,
+            #theme-toggle-btn-desktop {
+                display: none !important;
+            }
+
+            .location-display h1 {
+                font-size: 2em;
+            }
+
+            #countdown {
+                font-size: 2.2em;
+            }
+
+            .today-times {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .prayer-time .time {
+                font-size: 1.2em;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-buttons {
+                display: flex;
+                justify-content: space-around;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .filter-buttons button {
+                margin-right: 0;
+                flex-grow: 1;
+                margin: 0 3px;
+            }
+
+            #date-selector {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            th,
+            td {
+                padding: 8px 4px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .today-times {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            th,
+            td {
+                font-size: 0.8em;
+            }
+
+            .filter-buttons button {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+    <header>
+        <button id="mobile-menu-btn" class="mobile-only">☰</button>
+        <div class="header-buttons desktop-only">
+            <button id="update-location-btn-desktop">Konumu Güncelle</button>
+        </div>
+        <div class="location-display">
+            <h1 id="city-name">Şehir</h1>
+            <p><span id="next-prayer-name">İmsak</span> için kalan zaman</p>
+            <div id="countdown">00:00:00</div>
+        </div>
+        <div class="theme-switcher desktop-only">
+            <button id="theme-toggle-btn-desktop">☀️/🌙</button>
+        </div>
+        <h1></h1>
+    </header>
+
+    <div id="mobile-menu" class="mobile-menu-container">
+        <button class="close-mobile-menu-btn">&times;</button>
+        <div class="mobile-menu-content">
+            <h2>Ayarlar</h2>
+            <button id="update-location-btn-mobile">Konumu Güncelle</button>
+            <button id="theme-toggle-btn-mobile">Temayı Değiştir (☀️/🌙)</button>
+        </div>
+    </div>
+
+    <main>
+        <section class="today-times">
+            <div class="prayer-time current" id="imsak-card">
+                <p>İmsak</p>
+                <p class="time" id="imsak-time">00:00</p>
+            </div>
+            <div class="prayer-time" id="gunes-card">
+                <p>Güneş</p>
+                <p class="time" id="gunes-time">00:00</p>
+            </div>
+            <div class="prayer-time" id="ogle-card">
+                <p>Öğle</p>
+                <p class="time" id="ogle-time">00:00</p>
+            </div>
+            <div class="prayer-time" id="ikindi-card">
+                <p>İkindi</p>
+                <p class="time" id="ikindi-time">00:00</p>
+            </div>
+            <div class="prayer-time" id="aksam-card">
+                <p>Akşam</p>
+                <p class="time" id="aksam-time">00:00</p>
+            </div>
+            <div class="prayer-time" id="yatsi-card">
+                <p>Yatsı</p>
+                <p class="time" id="yatsi-time">00:00</p>
+            </div>
+        </section>
+
+        <section class="table-controls">
+            <div class="filter-buttons">
+                <button id="filter-monthly" class="active">1 Aylık Takvim</button>
+                <button id="filter-weekly">1 Haftalık Takvim</button>
+                <button id="filter-yearly">1 Yıllık Takvim</button>
+            </div>
+            <div class="date-picker">
+                <input type="date" id="date-selector">
+            </div>
+        </section>
+
+        <section class="prayer-table-section">
+            <table id="prayer-table">
+                <thead>
+                    <tr>
+                        <th>Miladi Tarih</th>
+                        <th>Hicri Tarih</th>
+                        <th>İmsak</th>
+                        <th>Güneş</th>
+                        <th>Öğle</th>
+                        <th>İkindi</th>
+                        <th>Akşam</th>
+                        <th>Yatsı</th>
+                    </tr>
+                </thead>
+                <tbody id="prayer-table-body">
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <div id="location-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Konumu Güncelle</h2>
+            <input type="text" id="location-input" placeholder="Şehir veya Ülke girin...">
+            <button id="submit-location-btn">Güncelle</button>
+        </div>
+    </div>
+
+    <script>
+        // Element Seçimleri
+        const cityNameElement = document.getElementById('city-name');
+        const nextPrayerNameElement = document.getElementById('next-prayer-name');
+        const countdownElement = document.getElementById('countdown');
+
+        // Masaüstü Butonları
+        const themeToggleBtnDesktop = document.getElementById('theme-toggle-btn-desktop');
+        const updateLocationBtnDesktop = document.getElementById('update-location-btn-desktop');
+
+        // Mobil Menü Elementleri
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuContainer = document.getElementById('mobile-menu');
+        const closeMobileMenuBtn = document.querySelector('.close-mobile-menu-btn');
+        const themeToggleBtnMobile = document.getElementById('theme-toggle-btn-mobile');
+        const updateLocationBtnMobile = document.getElementById('update-location-btn-mobile');
+
+        // Konum Modalı Elementleri
+        const locationModal = document.getElementById('location-modal');
+        const closeModalBtn = document.querySelector('.close-btn'); // Bu modalın kapatma butonu
+        const locationInput = document.getElementById('location-input');
+        const submitLocationBtn = document.getElementById('submit-location-btn');
+
+        // Tablo ve Filtre Elementleri
+        const prayerTableBody = document.getElementById('prayer-table-body');
+        const dateSelector = document.getElementById('date-selector');
+        const filterMonthlyBtn = document.getElementById('filter-monthly');
+        const filterWeeklyBtn = document.getElementById('filter-weekly');
+        const filterYearlyBtn = document.getElementById('filter-yearly');
+
+        // Günlük vakit kartları ve zamanları
+        const prayerTimeElements = {
+            Imsak: document.getElementById('imsak-time'),
+            Gunes: document.getElementById('gunes-time'),
+            Ogle: document.getElementById('ogle-time'),
+            Ikindi: document.getElementById('ikindi-time'),
+            Aksam: document.getElementById('aksam-time'),
+            Yatsi: document.getElementById('yatsi-time')
+        };
+        const prayerCards = {
+            Imsak: document.getElementById('imsak-card'),
+            Gunes: document.getElementById('gunes-card'),
+            Ogle: document.getElementById('ogle-card'),
+            Ikindi: document.getElementById('ikindi-card'),
+            Aksam: document.getElementById('aksam-card'),
+            Yatsi: document.getElementById('yatsi-card')
+        };
+
+        // Global Değişkenler
+        let currentCity = 'İstanbul'; // Varsayılan şehir
+        let currentCountry = 'Türkiye'; // Varsayılan ülke
+        let prayerTimesData = []; // API'den gelen tüm veriyi tutacak
+        let countdownInterval;
+        let currentFilter = 'monthly'; // Varsayılan filtre
+
+        // Türkiye'deki iller listesi
+        const turkishCities = [
+            'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Amasya', 'Ankara', 'Antalya', 'Artvin', 'Aydın', 'Balıkesir',
+            'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 'Çankırı', 'Çorum', 'Denizli',
+            'Diyarbakır', 'Edirne', 'Elazığ', 'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari',
+            'Hatay', 'Isparta', 'Mersin', 'İstanbul', 'İzmir', 'Kars', 'Kastamonu', 'Kayseri', 'Kırklareli', 'Kırşehir',
+            'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Kahramanmaraş', 'Mardin', 'Muğla', 'Muş', 'Nevşehir',
+            'Niğde', 'Ordu', 'Rize', 'Sakarya', 'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Tekirdağ', 'Tokat',
+            'Trabzon', 'Tunceli', 'Şanlıurfa', 'Uşak', 'Van', 'Yozgat', 'Zonguldak', 'Aksaray', 'Bayburt', 'Karaman',
+            'Kırıkkale', 'Batman', 'Şırnak', 'Bartın', 'Ardahan', 'Iğdır', 'Yalova', 'Karabük', 'Kilis', 'Osmaniye',
+            'Düzce'
+        ];
+
+        // --- Alternatif API Entegrasyonu (Aladhan API) ---
+        const PRAYER_API_BASE = 'https://api.aladhan.com/v1';
+        
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./service-worker.js");
+            });
+        }
+        // Şehir için namaz vakitlerini getir
+        async function fetchPrayerTimesForCity(cityName) {
+            try {
+                // API'de ülke parametresi olarak Türkiye ayarlı
+                const apiUrl = `${PRAYER_API_BASE}/timingsByCity?city=${encodeURIComponent(cityName)}&country=Turkey&method=13`; // 13: Türkiye Diyanet İşleri Başkanlığı
+
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`API isteği başarısız: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.code !== 200 || !result.data) {
+                    throw new Error('API geçersiz veri döndürdü');
+                }
+
+                // Bugün için namaz vakitlerini hazırla
+                const today = formatDate(new Date()); // DD.MM.YYYY formatı
+                const dailyTimesPromise = fetchPrayerTimesForMonth(cityName, today);
+
+                return await dailyTimesPromise;
+            } catch (error) {
+                console.error(`${cityName} için namaz vakitleri alınırken hata:`, error);
+                alert(`${cityName} için namaz vakitleri alınamadı. Lütfen tekrar deneyin.`);
+                return [];
+            }
+        }
+
+        // Belirli bir ay için namaz vakitlerini getir
+        async function fetchPrayerTimesForMonth(cityName, dateStr) {
+            try {
+                // DD.MM.YYYY formatını ayır
+                const dateParts = dateStr.split('.');
+                const month = parseInt(dateParts[1]);
+                const year = parseInt(dateParts[2]);
+
+                // API URL'ini oluştur - ay 1-12 arası
+                const apiUrl = `${PRAYER_API_BASE}/calendarByCity/${year}/${month}?city=${encodeURIComponent(cityName)}&country=Turkey&method=13`;
+
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`API isteği başarısız: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.code !== 200 || !result.data) {
+                    throw new Error('API geçersiz veri döndürdü');
+                }
+
+                // API verilerini uygun formata dönüştür
+                return result.data.map(item => {
+                    const gregorianDate = item.date.gregorian;
+                    const hijriDate = item.date.hijri;
+
+                    // DD.MM.YYYY formatında tarih oluştur
+                    const miladiTarih = `${gregorianDate.day}.${gregorianDate.month.number}.${gregorianDate.year}`;
+
+                    // Hicri tarih string'i oluştur
+                    const hicriTarih = `${hijriDate.day} ${translateHijriMonth(hijriDate.month.en)} ${hijriDate.year}`;
+
+                    return {
+                        date: miladiTarih,
+                        hijri: hicriTarih,
+                        times: {
+                            Fajr: item.timings.Fajr.split(' ')[0], // Sadece saat kısmını al
+                            Sunrise: item.timings.Sunrise.split(' ')[0],
+                            Dhuhr: item.timings.Dhuhr.split(' ')[0],
+                            Asr: item.timings.Asr.split(' ')[0],
+                            Maghrib: item.timings.Maghrib.split(' ')[0],
+                            Isha: item.timings.Isha.split(' ')[0]
+                        }
+                    };
+                });
+            } catch (error) {
+                console.error(`${cityName} için aylık namaz vakitleri alınırken hata:`, error);
+                alert(`${cityName} için aylık namaz vakitleri alınamadı. Lütfen tekrar deneyin.`);
+                return [];
+            }
+        }
+
+        // Helper fonksiyonlar
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1)
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+
+        // Hicri ayları Türkçeye çevir
+        function translateHijriMonth(englishMonth) {
+            const translations = {
+                'Muharram': 'Muharrem',
+                'Safar': 'Safer',
+                'Rabi al-awwal': 'Rebiülevvel',
+                'Rabi al-thani': 'Rebiülahir',
+                'Jumada al-awwal': 'Cemaziyelevvel',
+                'Jumada al-thani': 'Cemaziyelahir',
+                'Rajab': 'Recep',
+                'Shaban': 'Şaban',
+                'Ramadan': 'Ramazan',
+                'Shawwal': 'Şevval',
+                'Dhu al-Qadah': 'Zilkade',
+                'Dhu al-Hijjah': 'Zilhicce'
+            };
+
+            return translations[englishMonth] || englishMonth;
+        }
+
+        // Bir sonraki namaz vaktini bul ve geri sayımı başlat
+        function startCountdown(timings) {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            const now = new Date();
+            let nextPrayerTime = null;
+            let nextPrayerName = '';
+            let currentPrayerName = ''; // Şu anki vakti takip etmek için
+
+            // Namaz vakitlerini Date objelerine çevir
+            const prayerTimesToday = [
+                { name: 'İmsak', time: parseTimeString(timings.Fajr) },
+                { name: 'Güneş', time: parseTimeString(timings.Sunrise) },
+                { name: 'Öğle', time: parseTimeString(timings.Dhuhr) },
+                { name: 'İkindi', time: parseTimeString(timings.Asr) },
+                { name: 'Akşam', time: parseTimeString(timings.Maghrib) },
+                { name: 'Yatsı', time: parseTimeString(timings.Isha) }
+            ];
+
+            // Bir sonraki vakti bul
+            for (let i = 0; i < prayerTimesToday.length; i++) {
+                const prayer = prayerTimesToday[i];
+                if (prayer.time > now) {
+                    nextPrayerTime = prayer.time;
+                    nextPrayerName = prayer.name;
+
+                    // Şu anki vakti belirle (bir önceki vakit)
+                    if (i > 0) {
+                        currentPrayerName = prayerTimesToday[i - 1].name;
+                    } else {
+                        // Eğer ilk vakit ise (İmsak) ve henüz girmemişse, son vakit (Yatsı) hâlâ geçerli demektir
+                        currentPrayerName = 'Yatsı';
+                    }
+                    break;
+                }
+            }
+
+            // Eğer tüm vakitler geçtiyse, yarının ilk vaktini (İmsak) al
+            // ve şu anki vakit son vakit (Yatsı) olur
+            if (!nextPrayerTime) {
+                nextPrayerTime = parseTimeString(timings.Fajr);
+                nextPrayerTime.setDate(nextPrayerTime.getDate() + 1); // Tarihi bir gün ileri al
+                nextPrayerName = 'İmsak';
+                currentPrayerName = 'Yatsı'; // Son vakit hâlâ geçerli
+            }
+
+            // UI'da bir sonraki vakit ismini güncelle
+            nextPrayerNameElement.textContent = nextPrayerName;
+
+            // Şu anki vaktin kartını vurgula (sonraki değil)
+            updateCurrentPrayerCard(currentPrayerName);
+
+            // Geri sayımı başlat
+            countdownInterval = setInterval(() => {
+                const currentTime = new Date();
+                const timeDifference = nextPrayerTime - currentTime;
+
+                if (timeDifference <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.textContent = 'Vakit Girdi!';
+                    // Vakit girdiğinde verileri yenilemek iyi olabilir
+                    loadData();
+                    return;
+                }
+
+                const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+                countdownElement.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+
+            }, 1000);
+        }
+
+        // 'HH:MM' formatındaki stringi bugünün Date objesine çevirir
+        function parseTimeString(timeString) {
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0); // Saat ve dakikayı ayarla
+            return date;
+        }
+
+        // Sayının başına 0 ekler (örn: 5 -> 05)
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        // Mevcut veya bir sonraki vakit kartını vurgula
+        function updateCurrentPrayerCard(prayerName) {
+            // Önce tüm vurguları kaldır
+            Object.values(prayerCards).forEach(card => card.classList.remove('current'));
+
+            // API isimlerini UI isimlerine çevir
+            const prayerNameMap = {
+                'İmsak': 'Imsak',
+                'Güneş': 'Gunes',
+                'Öğle': 'Ogle',
+                'İkindi': 'Ikindi',
+                'Akşam': 'Aksam',
+                'Yatsı': 'Yatsi'
+            };
+            const cardKey = prayerNameMap[prayerName];
+
+            if (cardKey && prayerCards[cardKey]) {
+                prayerCards[cardKey].classList.add('current');
+            }
+        }
+
+        // --- Konum Güncelleme (İl tahmini özelliği ile) ---
+        function setupCityAutocomplete() {
+            // İl girişi için autocomplete özelliği
+            locationInput.addEventListener('input', function () {
+                const input = this.value.trim();
+
+                // Önceki autocomplete listesini temizle
+                const existingList = document.getElementById('city-autocomplete-list');
+                if (existingList) {
+                    existingList.remove();
+                }
+
+                // En az 1 karakter girilmişse önerileri göster
+                if (input.length >= 1) {
+                    const lowercaseInput = input.toLowerCase();
+                    const filteredCities = turkishCities.filter(city =>
+                        city.toLowerCase().startsWith(lowercaseInput)
+                    );
+
+                    if (filteredCities.length > 0) {
+                        // Öneri listesi oluştur
+                        const autocompleteList = document.createElement('div');
+                        autocompleteList.id = 'city-autocomplete-list';
+                        autocompleteList.className = 'autocomplete-list';
+
+                        filteredCities.forEach(city => {
+                            const item = document.createElement('div');
+                            item.className = 'autocomplete-item';
+                            item.textContent = city;
+
+                            // Tıklama olayı
+                            item.addEventListener('click', function () {
+                                locationInput.value = city;
+                                autocompleteList.remove();
+                            });
+
+                            autocompleteList.appendChild(item);
+                        });
+
+                        // Listeyi inputun altına ekle
+                        locationInput.parentNode.appendChild(autocompleteList);
+                    }
+                }
+            });
+
+            // İnput dışına tıklamada listeyi kaldır
+            document.addEventListener('click', function (e) {
+                if (e.target !== locationInput) {
+                    const list = document.getElementById('city-autocomplete-list');
+                    if (list) list.remove();
+                }
+            });
+        }
+
+        function openLocationModal() {
+            locationInput.value = currentCity; // Mevcut ili göster
+            locationModal.style.display = 'flex'; // Modalı görünür yap
+            closeMobileMenu(); // Konum modalı açılınca mobil menüyü kapat
+
+            // Autocomplete için mevcut ili göster sonrasında temizle
+            setTimeout(() => {
+                if (!document.getElementById('city-autocomplete-list')) {
+                    const input = locationInput.value.trim();
+                    if (input.length >= 1) {
+                        // Input olayını tetikle
+                        locationInput.dispatchEvent(new Event('input'));
+                    }
+                }
+            }, 300);
+        }
+
+        async function handleLocationUpdate() {
+            const newCity = locationInput.value.trim();
+            if (!newCity) {
+                alert('Lütfen bir şehir girin.');
+                return;
+            }
+
+            // Tam eşleşmeyi kontrol et
+            const matchedCity = turkishCities.find(city => city.toLowerCase() === newCity.toLowerCase());
+
+            if (matchedCity) {
+                // Eşleşen il varsa güncelle
+                currentCity = matchedCity;
+                cityNameElement.textContent = currentCity;
+                closeLocationModal();
+                await loadData(); // Yeni il için verileri API'dan çek
+                saveLocation(); // Yeni ili kaydet
+            } else {
+                // Önerileri kontrol et
+                const lowercaseCity = newCity.toLowerCase();
+                const suggestions = turkishCities.filter(city =>
+                    city.toLowerCase().startsWith(lowercaseCity)
+                );
+
+                if (suggestions.length === 1) {
+                    // Tek öneri varsa kullan
+                    currentCity = suggestions[0];
+                    cityNameElement.textContent = currentCity;
+                    closeLocationModal();
+                    await loadData();
+                    saveLocation();
+                } else if (suggestions.length > 1) {
+                    // Birden fazla öneri varsa ilk 5'ini göster
+                    const suggestionsText = suggestions.slice(0, 5).join(', ');
+                    alert(`"${newCity}" geçerli bir il değil. Şunlardan birini deneyin: ${suggestionsText}`);
+                } else {
+                    alert(`"${newCity}" geçerli bir il değil. Lütfen Türkiye'deki bir il adı girin.`);
+                }
+            }
+        }
+
+        // Konumu localStorage'a kaydet
+        function saveLocation() {
+            localStorage.setItem('location', JSON.stringify({ city: currentCity }));
+        }
+
+        // Kayıtlı konumu yükle
+        function loadLocation() {
+            const savedLocation = localStorage.getItem('location');
+            if (savedLocation) {
+                try {
+                    const loc = JSON.parse(savedLocation);
+                    if (loc.city && turkishCities.includes(loc.city)) {
+                        currentCity = loc.city;
+                    } else {
+                        currentCity = 'İstanbul'; // Geçersiz ise varsayılan
+                    }
+                }
+                catch (e) {
+                    console.error('Kaydedilmiş konum okunurken hata:', e);
+                    currentCity = 'İstanbul'; // Hata durumunda varsayılan
+                }
+            }
+            cityNameElement.textContent = currentCity;
+        }
+
+        // --- Ana veri yükleme fonksiyonu ---
+        async function loadData() {
+            cityNameElement.textContent = currentCity;
+
+            try {
+                // Şehir için namaz vakitlerini getir
+                const timesData = await fetchPrayerTimesForCity(currentCity);
+
+                if (timesData && timesData.length > 0) {
+                    // Tüm veriyi sakla
+                    prayerTimesData = timesData;
+
+                    // Bugünün tarihi
+                    const today = new Date();
+                    const todayString = formatDate(today);
+
+                    // Bugünün verilerini bul
+                    const todayData = prayerTimesData.find(item => item.date === todayString);
+
+                    if (todayData) {
+                        // Bugünün vakitlerini güncelle
+                        updateTodayTimes(todayData);
+
+                        // Seçili filtreye göre tablo verilerini filtrele
+                        let filteredData = [];
+
+                        if (currentFilter === 'monthly') {
+                            // Mevcut ayın vakitleri (zaten ayı çekmiş olacağız)
+                            filteredData = prayerTimesData;
+                        }
+                        else if (currentFilter === 'weekly') {
+                            // Bugünden itibaren 7 gün
+                            const todayIndex = prayerTimesData.findIndex(item => item.date === todayString);
+                            if (todayIndex !== -1) {
+                                filteredData = prayerTimesData.slice(todayIndex, todayIndex + 7);
+                            } else {
+                                filteredData = prayerTimesData.slice(0, 7);
+                            }
+                        }
+                        else if (currentFilter === 'yearly') {
+                            // Tüm yıl (API genellikle 30 günlük veri döndürür)
+                            filteredData = prayerTimesData;
+                            // Not: Gerçek "yıllık" görünüm için, ardışık ayların verilerini çekmek gerekecektir
+                        }
+                        else if (currentFilter === 'specific_date') {
+                            // Tarih seçiciden gelen tarih
+                            const selectedDate = dateSelector.value; // YYYY-MM-DD
+                            const [sYear, sMonth, sDay] = selectedDate.split('-');
+                            const formattedSelectedDate = `${sDay}.${sMonth}.${sYear}`; // DD.MM.YYYY formatına dönüştür
+
+                            // Önce prayerTimesData'da bu tarih var mı kontrol edelim
+                            const existingData = prayerTimesData.find(item => item.date === formattedSelectedDate);
+
+                            if (existingData) {
+                                // Eğer seçilen tarih mevcut veri içinde varsa sadece onu göster
+                                filteredData = [existingData];
+
+                                // Ayrıca, seçilen günün bilgilerini vakitler kartında da göster
+                                updateTodayTimes(existingData);
+                            } else {
+                                // Seçilen tarihin bulunduğu ayın verilerini çek
+                                try {
+                                    const selectedMonthData = await fetchPrayerTimesForMonth(currentCity, formattedSelectedDate);
+
+                                    // Seçilen tarihe tam uyan günü bul
+                                    const selectedDayData = selectedMonthData.find(item => item.date === formattedSelectedDate);
+
+                                    if (selectedDayData) {
+                                        filteredData = [selectedDayData];
+
+                                        // Seçilen günün vakitlerini kartlarda göster
+                                        updateTodayTimes(selectedDayData);
+                                    } else {
+                                        // Bulunamadıysa, en yakın gün veya mevcut ayın verilerini göster
+                                        filteredData = selectedMonthData.length > 0 ? [selectedMonthData[0]] : prayerTimesData;
+
+                                        if (filteredData.length > 0) {
+                                            updateTodayTimes(filteredData[0]);
+                                        }
+
+                                        console.log('Seçilen tarih bulunamadı, alternatif veri gösteriliyor');
+                                    }
+                                } catch (error) {
+                                    console.error('Seçilen tarih için veri çekerken hata:', error);
+                                    filteredData = prayerTimesData; // Hata durumunda mevcut verileri göster
+                                }
+                            }
+                        }
+
+                        // Tabloyu doldur
+                        populatePrayerTable(filteredData);
+                    } else {
+                        console.error('Bugün için namaz vakitleri bulunamadı.');
+                        populatePrayerTable(prayerTimesData); // Mevcut ayın verilerini göster
+
+                        // Bugün için veri bulunamadıysa, ilk günü kullanarak kartları göster
+                        if (prayerTimesData.length > 0) {
+                            updateTodayTimes(prayerTimesData[0]);
+                            console.log('Bugün için veri bulunamadı, ilk gün verileri kullanılıyor.');
+                        }
+                    }
+                } else {
+                    console.error('Veriler alınamadı veya boş.');
+                    alert('Namaz vakitleri alınamadı. Lütfen internet bağlantınızı kontrol edin ve sayfayı yenileyin.');
+                }
+            } catch (error) {
+                console.error('Veri yüklenirken hata:', error);
+                alert(`Veri yüklenirken hata oluştu: ${error.message}`);
+            }
+        }
+
+        // --- Bugünün namaz vakitlerini göster (güncellenmiş) ---
+        function updateTodayTimes(todayData) {
+            if (!todayData || !todayData.times) {
+                console.error('Vakit verileri alınamadı:', todayData);
+                return;
+            }
+
+            try {
+                console.log('Bugünün vakitleri güncelleniyor:', todayData);
+
+                // API'den gelen isimlerle doğrudan eşleştirme
+                prayerTimeElements.Imsak.textContent = todayData.times.Fajr;
+                prayerTimeElements.Gunes.textContent = todayData.times.Sunrise;
+                prayerTimeElements.Ogle.textContent = todayData.times.Dhuhr;
+                prayerTimeElements.Ikindi.textContent = todayData.times.Asr;
+                prayerTimeElements.Aksam.textContent = todayData.times.Maghrib;
+                prayerTimeElements.Yatsi.textContent = todayData.times.Isha;
+
+                // Bir sonraki vakti ve geri sayımı başlat
+                startCountdown(todayData.times);
+            } catch (error) {
+                console.error('Vakit kartları güncellenirken hata:', error);
+            }
+        }
+
+        // Namaz vakitleri tablosunu doldur (güncellenmiş)
+        function populatePrayerTable(data) {
+            prayerTableBody.innerHTML = ''; // Tabloyu temizle
+
+            if (!data || data.length === 0) {
+                prayerTableBody.innerHTML = '<tr><td colspan="8">Veri bulunamadı.</td></tr>';
+                return;
+            }
+
+            // Bugünün tarihini al - formatDate fonksiyonunu kullanıyoruz (DD.MM.YYYY formatında)
+            const todayString = formatDate(new Date());
+
+            // Tarih seçiciden seçilen tarih varsa, onu da formatla (DD.MM.YYYY)
+            let selectedDateString = '';
+            if (currentFilter === 'specific_date') {
+                const selectedDateValue = dateSelector.value; // YYYY-MM-DD
+                if (selectedDateValue) {
+                    const [sYear, sMonth, sDay] = selectedDateValue.split('-');
+                    selectedDateString = `${sDay}.${sMonth}.${sYear}`; // DD.MM.YYYY formatına dönüştür
+                }
+            }
+
+            data.forEach(dayData => {
+                const row = document.createElement('tr');
+
+                // Eğer bu satır bugünün tarihiyse veya seçilen tarihse, vurgula
+                const isToday = dayData.date === todayString;
+                const isSelectedDate = selectedDateString && dayData.date === selectedDateString;
+
+                if (isToday || isSelectedDate) {
+                    row.classList.add('current-day');
+                    // Günün satırına custom stil ekle
+                    row.style.backgroundColor = 'rgba(197, 219, 68, 0.2)';
+                    row.style.fontWeight = '500';
+                    row.style.color = '#FFFFFF';
+
+                    // Eğer seçilen tarihse, bu bilgiyi de ekleyelim (isteğe bağlı)
+                    if (isSelectedDate && !isToday) {
+                        row.setAttribute('title', 'Seçilen Tarih');
+                    }
+                }
+
+                // Tarihi Date nesnesi olarak ayarla
+                const dateParts = dayData.date.split('.'); // DD.MM.YYYY
+                const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' }; // Haftanın gününü ekle
+                const formattedDate = dateObj.toLocaleDateString('tr-TR', options);
+
+                row.innerHTML = `
+            <td>${formattedDate}</td>
+            <td>${dayData.hijri}</td>
+            <td>${dayData.times.Fajr}</td>
+            <td>${dayData.times.Sunrise}</td>
+            <td>${dayData.times.Dhuhr}</td>
+            <td>${dayData.times.Asr}</td>
+            <td>${dayData.times.Maghrib}</td>
+            <td>${dayData.times.Isha}</td>
+        `;
+                prayerTableBody.appendChild(row);
+            });
+        }
+
+        // Tarih seçiciyi bugünün tarihiyle başlat
+        function initializeDatePicker() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = padZero(today.getMonth() + 1);
+            const day = padZero(today.getDate());
+            dateSelector.value = `${year}-${month}-${day}`;
+        }
+
+        // Filtre butonlarının durumunu güncelle
+        function updateFilterButtons(activeFilter) {
+            filterMonthlyBtn.classList.toggle('active', activeFilter === 'monthly');
+            filterWeeklyBtn.classList.toggle('active', activeFilter === 'weekly');
+            filterYearlyBtn.classList.toggle('active', activeFilter === 'yearly');
+        }
+
+        // --- Başlangıç Fonksiyonları ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // CSS için autocomplete stilleri ekle
+                const style = document.createElement('style');
+                style.textContent = `
+            .autocomplete-list {
+                position: absolute;
+                width: calc(100% - 20px);
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: var(--card-bg-color);
+                border: 1px solid var(--border-color);
+                border-radius: 0 0 5px 5px;
+                z-index: 10;
+                margin-top: -15px;
+            }
+            
+            .autocomplete-item {
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .autocomplete-item:hover {
+                background-color: var(--button-hover-bg-color);
+            }
+            
+            #location-input {
+                margin-bottom: 25px; 
+            }
+            
+            .modal-content {
+                position: relative; 
+            }
+        `;
+                document.head.appendChild(style);
+
+                loadTheme();
+                loadLocation();
+                setupCityAutocomplete();
+                initializeDatePicker();
+                updateFilterButtons(currentFilter);
+
+                // Verileri yükle
+                await loadData();
+
+                console.log('Tüm sayfa bileşenleri ve veriler yüklendi.');
+            } catch (error) {
+                console.error('Sayfa yüklenirken bir hata oluştu:', error);
+            }
+        });
+
+        // --- Mobil Menü Fonksiyonları ---
+        function openMobileMenu() {
+            mobileMenuContainer.classList.add('open');
+        }
+
+        function closeMobileMenu() {
+            mobileMenuContainer.classList.remove('open');
+        }
+
+        // --- Tema Değiştirme --- 
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            // Seçimi localStorage'a kaydeta
+            if (document.body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+            }
+            else {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            // Varsayılan karanlık mod olduğu için 'dark' kontrolüne gerek yok
+        }
+
+        // --- Konum Güncelleme --- 
+        function closeLocationModal() {
+            locationModal.style.display = 'none';
+        }
+
+        // Filtre butonları
+        filterMonthlyBtn.addEventListener('click', async () => {
+            if (currentFilter !== 'monthly') {
+                currentFilter = 'monthly';
+                updateFilterButtons(currentFilter);
+                await loadData();
+            }
+        });
+
+        filterWeeklyBtn.addEventListener('click', async () => {
+            if (currentFilter !== 'weekly') {
+                currentFilter = 'weekly';
+                updateFilterButtons(currentFilter);
+                await loadData();
+            }
+        });
+
+        filterYearlyBtn.addEventListener('click', async () => {
+            if (currentFilter !== 'yearly') {
+                currentFilter = 'yearly';
+                updateFilterButtons(currentFilter);
+                await loadData();
+            }
+        });
+
+        // Tarih seçici
+        dateSelector.addEventListener('change', async () => {
+            currentFilter = 'specific_date';
+            updateFilterButtons(null); // Aktif filtre butonunu kaldır
+            await loadData();
+        });
+
+        // --- Olay Dinleyicileri --- 
+
+        // Tema Değiştirme (Masaüstü ve Mobil)
+        themeToggleBtnDesktop.addEventListener('click', toggleTheme);
+        themeToggleBtnMobile.addEventListener('click', () => {
+            toggleTheme();
+            closeMobileMenu(); // Menüyü kapat
+        });
+
+        // Konum Güncelleme Modalı Açma (Masaüstü ve Mobil)
+        updateLocationBtnDesktop.addEventListener('click', openLocationModal);
+        updateLocationBtnMobile.addEventListener('click', openLocationModal); // Zaten mobil menüyü kapatıyor
+
+        // Konum Modalı Kapatma ve Gönderme
+        closeModalBtn.addEventListener('click', closeLocationModal);
+        submitLocationBtn.addEventListener('click', handleLocationUpdate);
+
+        // Mobil Menü Açma/Kapatma
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMobileMenuBtn.addEventListener('click', closeMobileMenu);
+
+        // Modal dışına tıklayınca konum modalını kapat
+        window.addEventListener('click', (event) => {
+            if (event.target === locationModal) {
+                closeLocationModal();
+            }
+            // Mobil menü dışına tıklayınca kapatmak için (isteğe bağlı)
+            // if (!mobileMenuContainer.contains(event.target) && event.target !== mobileMenuBtn && mobileMenuContainer.classList.contains('open')) {
+            //     closeMobileMenu();
+            // }
+        }); 
+    </script>
+</body>
+
+</html>

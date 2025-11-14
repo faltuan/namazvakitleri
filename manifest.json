@@ -1,0 +1,16 @@
+{
+  "name": "Altın Döviz Fiyat Takip",
+  "short_name": "Altın Döviz Fiyatları",
+  "start_url": "/fgoldprices.github.io/index.html",
+  "scope": "/fgoldprices.github.io/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "/fgoldprices.github.io/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
