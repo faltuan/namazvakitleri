@@ -1,7 +1,7 @@
 {
   "name": "Namaz Vakitleri",
   "short_name": "Namaz Vakitleri",
-  "start_url": "faltuan.github.io/",
+  "start_url": "faltuan.github.io/index.html",
   "scope": "/namazvakitleri/",
   "display": "standalone",
   "background_color": "#121212",
