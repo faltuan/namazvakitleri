@@ -1,7 +1,7 @@
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open("fgold-cache").then((cache) => {
-      return cache.addAll(["index.html", "icon-512.png", "manifest.json"]);
+      return cache.addAll(["/namazvakitleri/index.html", "/namazvakitleri/icon-512.png", "/namazvakitleri/manifest.json"]);
     })
   );
 });

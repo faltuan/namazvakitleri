@@ -8,7 +8,7 @@
   "theme_color": "#121212",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/faltuan/namazvakitleri/refs/heads/main/icon-512.png",
+      "src": "/namazvakitleri/icon-512.png",
       "sizes": "1024x1024",
       "type": "image/png"
     }
